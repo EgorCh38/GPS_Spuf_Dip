@@ -1,0 +1,43 @@
+import numpy as np
+from scipy.integrate import solve_ivp
+
+import matplotlib.pyplot as plt
+
+
+# Гравитационная постоянная и масса Земли
+G = 6.67430e-20  # km^3/kg/s^2
+M_earth = 5.972e24  # kg
+mu = G * M_earth  # km^3/s^2
+
+
+#satellite_derivatives \ Уравнения движения спутника
+def sd(t, state):
+
+    x, y, z, vx, vy, vz = state
+    r = np.sqrt(x**2 + y**2 + z**2)
+
+    ax = -mu * x / r**3
+    ay = -mu * y / r**3
+    az = -mu * z / r**3
+
+    return [vx, vy, vz, ax, ay, az]
+
+
+#predict_satellite_position \ Прогнозирует положение и скорость спутника в заданный момент времени
+def psp(init, t):
+
+    # Временной интервал для прогнозирования
+    t_span = (0, t)
+
+    # Решение дифференциальных уравнений
+    solution = solve_ivp(sd, t_span, init, method='RK45')
+
+    # Получение результатов для искомого момента времени
+    if solution.t[-1] >= t:
+        # Интерполяция для получения значений в искомый момент времени
+        idx = np.searchsorted(solution.t, t)
+        state = solution.y[:, idx]
+        #return state[:3], state[3:]
+        return state
+    else:
+        return None
