@@ -36,9 +36,9 @@ def psp(init, t):
     if solution.t[-1] >= t:
         # Интерполяция для получения значений в искомый момент времени
         idx = np.searchsorted(solution.t, t)
-        state_at_time = solution.y[:, idx]
-        #return state_at_time[:3], state_at_time[3:]
-        return state_at_time
+        state = solution.y[:, idx]
+        #return state[:3], state[3:]
+        return state
     else:
         return None
 
